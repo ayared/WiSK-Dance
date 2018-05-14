@@ -11,11 +11,13 @@ spotify = spotipy.Spotify(auth=token)
 prompt = input('Search for a song: ')
 results = spotify.search(prompt,type='track')
 
-# for item in results['tracks']['items']:
-#      print('track: ' + item['name'])
+for index, item in enumerate(results['tracks']['items']):
+     print('track ' + str(index) + ': ' + str(item['name']))
+
+song_number = int(input('Select a song number: '))
+url = results['tracks']['items'][song_number]['external_urls']['spotify']
 
 # print(results['tracks']['items'][2])
-
-url = results['tracks']['items'][2]['external_urls']['spotify']
+# url = results['tracks']['items'][2]['external_urls']['spotify']
 
 webbrowser.open(url)
