@@ -12,7 +12,7 @@ prompt = input('Search for a song: ')
 results = spotify.search(prompt,type='track')
 
 for index, item in enumerate(results['tracks']['items']):
-     print('track ' + str(index) + ': ' + str(item['name']))
+     print('track ' + str(index) + ': ' + str(item['name']) + ' by ' + str(item['artists'][0]['name']))
 
 song_number = int(input('Select a song number: '))
 url = results['tracks']['items'][song_number]['external_urls']['spotify']
