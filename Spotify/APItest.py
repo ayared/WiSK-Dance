@@ -13,11 +13,12 @@ results = spotify.search(prompt,type='track')
 
 for index, item in enumerate(results['tracks']['items']):
      print('track ' + str(index) + ': ' + str(item['name']) + ' by ' + str(item['artists'][0]['name']))
+print('Or enter CANCEL')
+song_number = input('Select a song number: ')
 
-song_number = int(input('Select a song number: '))
-url = results['tracks']['items'][song_number]['external_urls']['spotify']
-
-# print(results['tracks']['items'][2])
-# url = results['tracks']['items'][2]['external_urls']['spotify']
-
-webbrowser.open(url)
+if(song_number.isdigit()):
+    song_number = int(song_number)
+    url = results['tracks']['items'][song_number]['external_urls']['spotify']
+    webbrowser.open(url)
+else:
+    print('Goodbye')
