@@ -8,6 +8,8 @@
 
 import spotipy.util as util
 
+# Pulls information assinged to WiSK-Dance by Spotify API
+# from a local text file
 def ReadFile(fileName): 
     f = open(fileName)
     tokens = f.read().splitlines()
@@ -24,6 +26,7 @@ def unitTest():
     print(c)
     return
 
+# Assembles Spotify API token from local file credentials
 def GetToken(fileName):
     scope = 'user-library-read'
     username = 'WiSK-Dance'
