@@ -1,6 +1,8 @@
 # visualizer.py
 # The GUI file controlling WiSK Dance's visualization
 
+# Inspiration from: https://github.com/pygame/pygame/blob/master/examples/aliens.py
+
 try:
     import sys, pygame, os, random
     from pygame.locals import *
@@ -27,7 +29,7 @@ DIFF = Difficulty.EASY
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 
 def load_image(file):
-    "loads an image, prepares it for play"
+    "loads an image"
     file = os.path.join(main_dir, file)
     try:
         surface = pygame.image.load(file)
@@ -40,6 +42,7 @@ def load_image(file):
     return surface.convert()
 
 def load_images(*files):
+    "loads an array of images"
     imgs = []
     for file in files:
         imgs.append(load_image(file))
@@ -48,8 +51,8 @@ def load_images(*files):
 class Arrow(pygame.sprite.Sprite):
     """An arrow that will move across the screen
     Returns: arrow object
-    Functions: update, rot_center, remove
-    Attributes: image, rect, area, difficulty, direction, speed"""
+    Functions: update
+    Attributes: direction, speed, image, rect, frame"""
 
     images = []
     def __init__(self, direction):
@@ -62,7 +65,7 @@ class Arrow(pygame.sprite.Sprite):
         self.frame = 0
 
     def update(self):
-        """update the location of the arrow"""
+        """update the location of the arrow and remove it if needed"""
         self.rect.move_ip(0, self.speed)
         self.frame = self.frame + 1
         if self.rect.bottom <= 0:
