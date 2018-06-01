@@ -58,7 +58,7 @@ class Arrow(pygame.sprite.Sprite):
     def __init__(self, direction):
         pygame.sprite.Sprite.__init__(self, self.containers)
         self.direction = direction
-        self.speed = -2                 #FIX THIS TO SAY (DIFF+1)*(-2)
+        self.speed = -6                 #FIX THIS TO SAY (DIFF+1)*(-2)
         self.image = self.images[self.direction]
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(SCREENRECT.width*self.direction/4 + (SCREENRECT.width/4 - self.rect.width)/2, SCREENRECT.height)
@@ -109,12 +109,14 @@ def main(winstyle = 0):
     # Initialize clock
     clock = pygame.time.Clock()
 
-    # Set the number of frames between new arrows
-    NEW_ARROW = 120          #FIX THIS TO INCORPORATE 60/(DIFF+1)
-    newarrow = NEW_ARROW
+    # Set the number of frames between new arrows (this is for random arrows in the current code)
+    NEW_ARROW = 40          #FIX THIS TO INCORPORATE 60/(DIFF+1)
 
-    # Create a sequence of arrows, by direction
-    seq = (0, 1, 2, 3)
+    # Create a sequence of arrows, by direction, each is a tuple with the (direction of the arrow, frame count when the arrow appears)
+    seq = ((0, 40), (1, 80), (2, 120), (3, 160))
+
+    # Initialize the time delay before the first arrow
+    newarrow = seq[0][1]
 
     i = 0
     # Event loop
@@ -128,12 +130,15 @@ def main(winstyle = 0):
         # update all the sprites
         all.update()
 
-        # create new arrow
+        # create new arrow when the newarrow timer has expired
         if newarrow:
             newarrow = newarrow - 1
         elif i < len(seq):
-            Arrow(seq[i])
-            newarrow = NEW_ARROW
+            Arrow(seq[i][0])
+            if i + 1 < len(seq):
+                newarrow = seq[i+1][1] - seq[i][1]
+            else:
+                newarrow = NEW_ARROW
             i = i + 1
         else:
             Arrow(random.randint(0, 3))
