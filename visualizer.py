@@ -25,6 +25,9 @@ class Difficulty(Enum):
 SCREENRECT = Rect(0, 0, 1280, 720)
 SCORE = 0
 DIFF = Difficulty.EASY
+TEMPO = 60                  # tempo in BPM, this will be passed in from Spotify
+SONGLENGTH = 60             # song length in seconds, this will be passed in from Spotify
+FRAMERATE = 60
 
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 
@@ -47,6 +50,15 @@ def load_images(*files):
     for file in files:
         imgs.append(load_image(file))
     return imgs
+
+def generate_sequence():
+    "generates a sequence of arrows based on the tempo and the song length"
+    seq = []
+    for framecount in range(0, SONGLENGTH * FRAMERATE, int(TEMPO / 60 * FRAMERATE)):     # is it okay to cast this last argument as an int?
+                                                                                        # does rounding down cause slow drift in arrow timing?
+        if random.randint(0,1):
+            seq.append((random.randint(0,3),framecount))
+    return seq
 
 class Arrow(pygame.sprite.Sprite):
     """An arrow that will move across the screen
@@ -110,15 +122,14 @@ def main(winstyle = 0):
     clock = pygame.time.Clock()
 
     # Set the number of frames between new arrows (this is for random arrows in the current code)
-    NEW_ARROW = 40          #FIX THIS TO INCORPORATE 60/(DIFF+1)
+    NEW_ARROW = 60          #FIX THIS TO INCORPORATE 60/(DIFF+1)
 
-    # Create a sequence of arrows, by direction, each is a tuple with the (direction of the arrow, frame count when the arrow appears)
-    seq = ((0, 40), (1, 80), (2, 120), (3, 160))
-
-    # Initialize the time delay before the first arrow
-    newarrow = seq[0][1]
+    # Create a sequence of arrows, by direction, each is a tuple with the (direction of the arrow, frame count when the arrow hits top of screen)
+    # seq = [(0, 60), (1, 120), (2, 180), (3, 240)]
+    seq = generate_sequence()
 
     i = 0
+    framecount = 0    #frames into
     # Event loop
     while 1:
         for event in pygame.event.get():
@@ -130,26 +141,18 @@ def main(winstyle = 0):
         # update all the sprites
         all.update()
 
-        # create new arrow when the newarrow timer has expired
-        if newarrow:
-            newarrow = newarrow - 1
-        elif i < len(seq):
+        # create new arrows based on time into game
+        if framecount > seq[i][1] - SCREENRECT.height/abs(-6):  #note that -6 is hard coded as the speed for now, this needs to be FIXED
             Arrow(seq[i][0])
-            if i + 1 < len(seq):
-                newarrow = seq[i+1][1] - seq[i][1]
-            else:
-                newarrow = NEW_ARROW
             i = i + 1
-        else:
-            Arrow(random.randint(0, 3))
-            newarrow = NEW_ARROW
 
         #draw the scene
         dirty = all.draw(screen)
         pygame.display.update(dirty)
 
         # Make sure game doesn't run at more than 60 frames per second
-        clock.tick(60)
+        clock.tick(FRAMERATE)
+        framecount = framecount + 1
 
 #call the "main" function if running this script
 if __name__ == '__main__': main()
