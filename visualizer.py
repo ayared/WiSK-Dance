@@ -63,7 +63,7 @@ def generate_sequence():
 class Arrow(pygame.sprite.Sprite):
     """An arrow that will move across the screen
     Returns: arrow object
-    Functions: update
+    Functions: update, check_pressed
     Attributes: direction, speed, image, rect, frame"""
 
     images = []
@@ -82,6 +82,22 @@ class Arrow(pygame.sprite.Sprite):
         self.frame = self.frame + 1
         if self.rect.bottom <= 0:
             self.kill()
+
+    def check_pressed(self, keystate):
+        """check if the user hit an arrow successfully"""
+        if (self.rect.top <= 100) and (self.rect.top >= 0):         # right now the arrow is hit if the top is within the top 100 pixels of the screen
+            if self.direction == 0 and keystate[pygame.K_LEFT]:
+                self.kill()
+                print("got a left arrow")
+            if self.direction == 1 and keystate[pygame.K_DOWN]:
+                self.kill()
+                print("got a down arrow")
+            if self.direction == 2 and keystate[pygame.K_UP]:
+                self.kill()
+                print("got an up arrow")
+            if self.direction == 3 and keystate[pygame.K_RIGHT]:
+                self.kill()
+                print("got a right arrow")
 
 def main(winstyle = 0):
     # Initialize pygame
@@ -116,7 +132,7 @@ def main(winstyle = 0):
     all = pygame.sprite.RenderUpdates()
 
     #assign default groups to each sprite class
-    Arrow.containers = all
+    Arrow.containers = arrows, all
     
     # Initialize clock
     clock = pygame.time.Clock()
@@ -132,8 +148,16 @@ def main(winstyle = 0):
     framecount = 0    #frames into
     # Event loop
     while 1:
+        # handle input
         for event in pygame.event.get():
-            if event.type == pygame.QUIT: sys.exit()
+            if event.type == pygame.QUIT:
+                sys.exit()
+            if event.type == pygame.KEYDOWN:        # determine if key pressed
+                keystate = pygame.key.get_pressed()
+                if event.key == pygame.K_q and keystate[pygame.K_LCTRL] or keystate[pygame.K_RCTRL]:
+                    return                          # quit game on ctrl + q
+                for arrow in arrows:                # check all of the arrows on the screen to determine if the correct key was pressed
+                    arrow.check_pressed(keystate)   
 
         # clear/erase the last drawn sprites
         all.clear(screen, background)
