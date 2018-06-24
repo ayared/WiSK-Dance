@@ -28,6 +28,7 @@ DIFF = Difficulty.EASY
 TEMPO = 60                  # tempo in BPM, this will be passed in from Spotify
 SONGLENGTH = 60             # song length in seconds, this will be passed in from Spotify
 FRAMERATE = 60
+SCORE = 0
 
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 
@@ -85,19 +86,40 @@ class Arrow(pygame.sprite.Sprite):
 
     def check_pressed(self, keystate):
         """check if the user hit an arrow successfully"""
-        if (self.rect.top <= 100) and (self.rect.top >= 0):         # right now the arrow is hit if the top is within the top 100 pixels of the screen
+        if (self.rect.top <= 50) and (self.rect.top >= -50):
             if self.direction == 0 and keystate[pygame.K_LEFT]:
                 self.kill()
                 print("got a left arrow")
+                return 50 - abs(self.rect.top)
             if self.direction == 1 and keystate[pygame.K_DOWN]:
                 self.kill()
                 print("got a down arrow")
+                return 50 - abs(self.rect.top)
             if self.direction == 2 and keystate[pygame.K_UP]:
                 self.kill()
                 print("got an up arrow")
+                return 50 - abs(self.rect.top)
             if self.direction == 3 and keystate[pygame.K_RIGHT]:
                 self.kill()
                 print("got a right arrow")
+                return 50 - abs(self.rect.top)
+        return 0
+
+class Score(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.font = pygame.font.Font(None, 30)
+        self.font.set_italic(1)
+        self.color = Color('white')
+        self.lastscore = -1
+        self.update()
+        self.rect = self.image.get_rect().move(10, 700)
+
+    def update(self):
+        if SCORE != self.lastscore:
+            self.lastscore = SCORE
+            msg = "Score: %d" % SCORE
+            self.image = self.font.render(msg, 0, self.color)
 
 def main(winstyle = 0):
     # Initialize pygame
@@ -133,12 +155,17 @@ def main(winstyle = 0):
 
     #assign default groups to each sprite class
     Arrow.containers = arrows, all
+    Score.containers = all
     
     # Initialize clock
     clock = pygame.time.Clock()
 
     # Set the number of frames between new arrows (this is for random arrows in the current code)
     NEW_ARROW = 60          #FIX THIS TO INCORPORATE 60/(DIFF+1)
+
+    global SCORE
+    if pygame.font:
+        all.add(Score())
 
     # Create a sequence of arrows, by direction, each is a tuple with the (direction of the arrow, frame count when the arrow hits top of screen)
     # seq = [(0, 60), (1, 120), (2, 180), (3, 240)]
@@ -157,7 +184,7 @@ def main(winstyle = 0):
                 if event.key == pygame.K_q and keystate[pygame.K_LCTRL] or keystate[pygame.K_RCTRL]:
                     return                          # quit game on ctrl + q
                 for arrow in arrows:                # check all of the arrows on the screen to determine if the correct key was pressed
-                    arrow.check_pressed(keystate)   
+                    SCORE = SCORE + arrow.check_pressed(keystate)
 
         # clear/erase the last drawn sprites
         all.clear(screen, background)
