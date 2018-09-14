@@ -3,7 +3,8 @@ pygame.init()
 
 COLOR_INACTIVE = pygame.Color('lightskyblue3')
 COLOR_ACTIVE = pygame.Color('dodgerblue2')
-FONT = pygame.font.Font(None, 32)
+FONT = pygame.font.SysFont("freesansbold.ttf",32)
+black = (0,0,0)
 
 class InputBox:
 
@@ -11,10 +12,10 @@ class InputBox:
         self.rect = pygame.Rect(x,y,w,h)
         self.color = COLOR_INACTIVE
         self.text = text
-        self.txt_surface = FONT.render(text, True, self.color)
+        self.txt_surface = FONT.render(text, True, black)
         self.active = False
     
-    def handle_event(self, event):
+    def handle_event(self, event, action=None):
         if event.type == pygame.MOUSEBUTTONDOWN: #user clicked on input box
             if self.rect.collidepoint(event.pos): #toggle active variable
                 self.active = not self.active
@@ -24,12 +25,15 @@ class InputBox:
         if event.type == pygame.KEYDOWN:
             if self.active:
                 if event.key == pygame.K_RETURN: #reset text on enter
-                    self.text = ''              #TODO, replace with call to Spotify
+                    if action == None:
+                        self.text = ''             
+                    else:
+                        action(self.text)
                 elif event.key == pygame.K_BACKSPACE: #delete character
                     self.text = self.text[:-1] 
                 else:
                     self.text += event.unicode #update string
-                self.txt_surface = FONT.render(self.text, True, self.color)
+                self.txt_surface = FONT.render(self.text, True, black)
     
     def update(self):
         #Resize box if text is too long
@@ -62,3 +66,4 @@ def button(msg,x,y,w,h,ic,ac,tc,screen,action=None):
 def text_objects(text, font,color):
     textSurface = font.render(text, True, color)
     return textSurface, textSurface.get_rect()
+

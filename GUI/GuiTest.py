@@ -2,6 +2,8 @@ import pygame
 import time
 import random
 from GUIComponents import InputBox, button, text_objects
+from SearchScreen import search_screen
+from StyleSheet import *
 pygame.init()
 
 display_width = 800
@@ -9,14 +11,6 @@ display_height = 600
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('WiSK Dance')
-
-black = (0,0,0)
-white = (255,255,255)
-red = (200,0,0)
-green = (0, 200, 0)
-blue = (0,0,100)
-bright_red = (255,0,0)
-bright_green = (0,255,0)
 
 clock = pygame.time.Clock()
 dmxImg = pygame.image.load('dmx.jpg')
@@ -27,7 +21,7 @@ def DMX(x,y):
 def game_quit():
     pygame.quit()
     quit()
-    
+
 def game_loop():
     crashed = False
     x = (display_width * 0.2)
@@ -62,9 +56,11 @@ def game_loop():
         pygame.display.update()
         clock.tick(60)
 
+def launch_search():
+    search_screen(display_width,display_height,gameDisplay,clock)
+
 def game_intro():
     intro = True
-    input_box = InputBox(100, 100, 140, 32)
 
     while intro:
         for event in pygame.event.get():
@@ -72,18 +68,15 @@ def game_intro():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            input_box.handle_event(event)
-            input_box.update()
                 
         gameDisplay.fill(white)
 
-        input_box.draw(gameDisplay)
         largeText = pygame.font.Font('freesansbold.ttf',115)
         TextSurf, TextRect = text_objects("WiSK Dance", largeText,black)
         TextRect.center = ((display_width/2),(display_height/2))
         gameDisplay.blit(TextSurf, TextRect)
 
-        button("GO!",150,450,100,50,green,bright_green,black,gameDisplay,game_loop)
+        button("GO!",150,450,100,50,green,bright_green,black,gameDisplay,launch_search)
         button("Quit",550,450,100,50,red,bright_red,black,gameDisplay,game_quit)
         
         pygame.display.update()
