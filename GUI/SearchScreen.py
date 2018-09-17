@@ -5,7 +5,7 @@ from GUIComponents import InputBox, button, text_objects
 from StyleSheet import *
 from ResultsScreen import results_screen
 
-def launch_results(text):
+#def launch_results(text):
     #results_screen(display_width,display_height,screen,clock)
 
 def search_screen(w,h,screen,clock):
@@ -18,7 +18,9 @@ def search_screen(w,h,screen,clock):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            input_box.handle_event(event,launch_results)
+            input_box.handle_event(event)
+            #input_box.handle_event(event,launch_results)
+            #have event return the string 
             input_box.update()
 
         screen.fill(white)
