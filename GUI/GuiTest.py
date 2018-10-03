@@ -22,6 +22,13 @@ def launch_search():
 def launch_results(text):
     results_screen(display_width,display_height,gameDisplay,clock,text)
 
+def launch_game(song_number):
+    if(song_number.isdigit()):
+        song_number = int(song_number)
+        url = results['tracks']['items'][song_number]['external_urls']['spotify']
+        webbrowser.open(url)
+    game_screen(display_width,display_height,gameDisplay,clock)
+
 def game_intro():
     intro = True
 
@@ -70,17 +77,22 @@ def search_screen(w,h,screen,clock):
         clock.tick(60)
 
 def results_screen(w,h,screen,clock,song_name):
-    results = True
+    show = True
     spotify = Authentication()
+    global results
     results = spotify.search(song_name,type='track')
-    while results:
+    input_box = InputBox(700, 900, 140, 32)
+    while show:
         for event in pygame.event.get():
             print(event)
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            input_box.handle_event(event,launch_game)
+            input_box.update()
         
         screen.fill(white) 
+        input_box.draw(screen)
         TextSurf=[None]*10
         TextRect=[None]*10
         for index, item in enumerate(results['tracks']['items']):
@@ -88,6 +100,26 @@ def results_screen(w,h,screen,clock,song_name):
             TextSurf[index], TextRect[index] = text_objects(text, mediumText,black)
             TextRect[index].center = ((w/2),(index*50+100))
             screen.blit(TextSurf[index], TextRect[index])      
+
+        SelectSurf, SelectRect = text_objects("Select a Song:",mediumText,black)
+        SelectRect.center = ((w/2),800)
+        screen.blit(SelectSurf,SelectRect)
+
+        pygame.display.update()
+        clock.tick(60)
+
+def game_screen(w,h,screen,clock):
+    ### PUT GAME HERE ###
+    #Temporary filler:
+    while True:
+        for event in pygame.event.get():
+            print(event)
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        
+        screen.fill(white)
+
         pygame.display.update()
         clock.tick(60)
 
