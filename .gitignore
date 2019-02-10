@@ -2,3 +2,7 @@ Spotify/SpotifyToken.txt
 Spotify/.cache-WiSK-Dance
 .vscode/settings.json
 
+.vscode/launch.json
+GUI/.cache-WiSK-Dance
+GUI/__pycache__/ReadToken.cpython-34.pyc
+GUI/__pycache__/StyleSheet.cpython-34.pyc

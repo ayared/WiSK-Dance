@@ -8,7 +8,7 @@ blue = (0,0,100)
 bright_red = (255,0,0)
 bright_green = (0,255,0)
 
-display_width = 1600
+display_width = 1400
 display_height = 1000
 
 largeText = pygame.font.Font('freesansbold.ttf',115)
